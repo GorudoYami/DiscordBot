@@ -180,13 +180,13 @@ namespace DiscordBot.Services {
                 case ErrorCode.InternalError:
                     return "Something went wrong... You should probably inform my Onii-chan about that.";
                 case ErrorCode.InvalidSummoner:
-                    return "This summoner doesn't exist you baka. Please remember that I can only check games on EUNE >:C";
+                    return "This summoner doesn't exist. Please remember that I can only check games on EUNE >:C";
                 case ErrorCode.ApiKeyExpired:
                     return "Onii-chan forgot to replace API key... as always. Sorry, no results until that's done!";
                 case ErrorCode.NotInGame:
                     return "Summoner is not in game.";
                 default:
-                    return "You shouldn't even see this message LMAO";
+                    return "You shouldn't even see this message.";
             }
         }
 

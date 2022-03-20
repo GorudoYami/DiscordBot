@@ -6,45 +6,44 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace DiscordBot.Handlers {
-    public class CommandHandler {
-        private readonly DiscordSocketClient client;
-        private readonly CommandService cmdService;
-        private readonly IServiceProvider services;
+namespace DiscordBot.Handlers;
 
-        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService cmdService) {
-            this.services = services;
-            this.client = client;
-            this.cmdService = cmdService;
+public class CommandHandler {
+	private readonly DiscordSocketClient Client;
+	private readonly CommandService CmdService;
+	private readonly IServiceProvider Services;
 
-            this.client.MessageReceived += HandleCommandAsync;
-            this.cmdService.CommandExecuted += OnCommandExecutedAsync;
-        }
+	public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService cmdService) {
+		Services = services;
+		Client = client;
+		CmdService = cmdService;
 
-        public async Task LoadModulesAsync() =>
-            await cmdService.AddModulesAsync(Assembly.GetEntryAssembly(), services);
+		Client.MessageReceived += HandleCommandAsync;
+		CmdService.CommandExecuted += OnCommandExecutedAsync;
+	}
 
-        private async Task HandleCommandAsync(SocketMessage msgParam) {
-            // If msg is null then it means it is a system message
-            SocketUserMessage msg = msgParam as SocketUserMessage;
-            if (msg == null)
-                return;
+	public async Task LoadModulesAsync() =>
+		await CmdService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
 
-            // Check if message has prefix or mention and isn't sent by bot
-            int argPos = 0;
-            if (!(msg.HasCharPrefix('&', ref argPos) ||
-                msg.HasMentionPrefix(client.CurrentUser, ref argPos)) ||
-                msg.Author.IsBot)
-                return;
+	private async Task HandleCommandAsync(SocketMessage msgParam) {
+		// If msg is null then it means it is a system message
+		if (msgParam is not SocketUserMessage msg)
+			return;
 
-            SocketCommandContext context = new SocketCommandContext(client, msg);
+		// Check if message has prefix or mention and isn't sent by bot
+		int argPos = 0;
+		if (!(msg.HasCharPrefix('&', ref argPos) ||
+			msg.HasMentionPrefix(Client.CurrentUser, ref argPos)) ||
+			msg.Author.IsBot)
+			return;
 
-            await cmdService.ExecuteAsync(context, argPos, services);
-        }
+		var context = new SocketCommandContext(Client, msg);
 
-        private async Task OnCommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result) {
-            if (!string.IsNullOrEmpty(result?.ErrorReason))
-                await context.Channel.SendMessageAsync(result.ErrorReason);
-        }
-    }
+		await CmdService.ExecuteAsync(context, argPos, Services);
+	}
+
+	private async Task OnCommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result) {
+		if (!string.IsNullOrEmpty(result?.ErrorReason))
+			await context.Channel.SendMessageAsync(result.ErrorReason);
+	}
 }

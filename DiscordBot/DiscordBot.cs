@@ -90,7 +90,8 @@ public class DiscordBot {
 	}
 
 	private Task LogAsync(LogMessage msg) {
-		return Task.Run(() => Logger.Log(GetLogLevelFromSeverity(msg.Severity), $"{msg.Message}"));
+		//return Task.Run(() => Logger.Log(GetLogLevelFromSeverity(msg.Severity), $"{msg.Message}"));
+		return Task.Run(() => Console.WriteLine(msg.ToString()));
 	}
 
 	private static LogLevel GetLogLevelFromSeverity(LogSeverity severity) {

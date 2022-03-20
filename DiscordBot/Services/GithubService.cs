@@ -84,12 +84,11 @@ public class GithubService {
 		var builder = new EmbedBuilder() {
 			Title = pullRequest.Title,
 			Description = newPullRequest ? "New pull request" : "Pull request closed",
-			Url = pullRequest.Url,
+			Url = pullRequest.HtmlUrl,
 			Color = newPullRequest ? Color.Green : Color.LightGrey,
 			Timestamp = pullRequest.CreatedAt
 		};
 		builder.WithFooter(footer => footer.Text = "Can I have headpats?");
-
 		return builder.Build();
 	}
 }
